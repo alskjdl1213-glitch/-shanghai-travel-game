@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>상하이 여행 선택게임</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f6f3ef;color:#222;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
+.wrap{max-width:720px;margin:auto;padding:22px 16px 40px}
+.card{background:white;border-radius:22px;padding:22px;box-shadow:0 6px 24px rgba(0,0,0,.07);margin-top:14px}
+h1{font-size:27px;margin:0 0 8px}
+h2{font-size:20px;margin:0 0 8px}
+p{line-height:1.55;color:#666}
+.progress{height:7px;background:#e9e5df;border-radius:99px;overflow:hidden;margin:18px 0}
+.bar{height:100%;background:#222;border-radius:99px;transition:.25s}
+.option{display:block;width:100%;text-align:left;border:1px solid #e2ded8;background:#fff;border-radius:16px;padding:16px;margin:10px 0;font-size:16px;cursor:pointer}
+.option:hover{border-color:#222;background:#fafafa}
+.option small{display:block;color:#888;margin-top:5px}
+.selected{border:2px solid #222;background:#f7f5f1}
+button.next,.restart{width:100%;border:0;border-radius:15px;padding:15px;background:#222;color:white;font-size:16px;margin-top:12px;cursor:pointer}
+.next:disabled{opacity:.3}
+.tag{display:inline-block;border-radius:99px;padding:5px 9px;background:#eee9e2;font-size:12px;margin:3px}
+.result{background:#222;color:white;border-radius:24px;padding:24px}
+.result p{color:#ddd}
+.route{border-top:1px solid rgba(255,255,255,.18);padding:12px 0}
+.fixed{background:#f1eee9;border-radius:15px;padding:14px;margin:12px 0}
+.muted{font-size:13px;color:#888}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>🇨🇳 상하이 여행 선택게임</h1>
+    <p>일행이 각자 선택하면 마지막에 자신에게 맞는 상하이 코스가 나오는 테스트 버전이에요.</p>
+    <div class="fixed">
+      <b>고정 일정</b><br>
+      10/29–11/1 아투어호텔 난징동루점<br>
+      11/1–11/2 노보텔 클로버 상하이<br>
+      11/1 디즈니랜드 · 11/2 야생동물원 → 16:25 귀국
+    </div>
+    <div class="progress"><div id="bar" class="bar"></div></div>
+    <div id="app"></div>
+  </div>
+</div>
+<script>
+const tourist = {
+  "와이탄": {area:"와이탄/난징동루", desc:"야경과 강변 산책 중심", rest:["하이디라오","게살국수","북경오리","점도덕","한식","양꼬치"]},
+  "예원": {area:"예원/구시가지", desc:"전통 정원·구시가지 중심", rest:["게살국수","북경오리","점도덕","한식","양꼬치"]},
+  "난징동루": {area:"난징동루/인민광장", desc:"쇼핑과 도심 관광 중심", rest:["하이디라오","게살국수","북경오리","점도덕","한식","양꼬치"]},
+  "신천지": {area:"신천지/황푸", desc:"카페·소품샵·도심 산책 중심", rest:["게살국수","북경오리","점도덕","한식","양꼬치"]},
+  "수향마을": {area:"수향마을", desc:"반나절~하루를 쓰는 외곽 일정", rest:["한식","양꼬치","북경오리"]},
+  "동방명주": {area:"푸동/루자쭈이", desc:"푸동 스카이라인 중심", rest:["하이디라오","북경오리","한식","양꼬치"]},
+  "티엔즈팡": {area:"티엔즈팡/프렌치 조계지", desc:"골목·소품·카페 중심", rest:["게살국수","북경오리","한식","양꼬치"]}
+};
+
+const restaurants = {
+ "하이디라오":{area:"난징동루/인민광장",place:"난징동루 830호 제일백화점 5층"},
+ "게살국수":{area:"난징동루/인민광장",place:"난징동루 일대 게황면·게살면 후보"},
+ "북경오리":{area:"황푸/난징동루",place:"황푸구 중심 후보"},
+ "점도덕":{area:"도심",place:"상하이 시내 후보"},
+ "한식":{area:"도심",place:"현재 위치에 따라 가까운 지점 선택"},
+ "양꼬치":{area:"도심/지역별",place:"현재 위치에 따라 가까운 지점 선택"}
+};
+
+const cafes = {
+ "카페A":{area:"난징동루/인민광장"}, "카페B":{area:"신천지/티엔즈팡"}, "카페C":{area:"와이탄/난징동루"}
+};
+const shops = {
+ "미니소":{area:"난징동루/인민광장"}, "디즈니스토어":{area:"난징동루/디즈니"}, "신천지 소품샵":{area:"신천지"}
+};
+
+let answers={tour:null, gov:null, rest:null, cafe:null, shop:null};
+let step=0;
+
+function nearChoices(obj, area){
+  const entries=Object.entries(obj);
+  const score=(x)=> {
+    if(!area) return 0;
+    const a=(x[1].area||"");
+    if(a===area) return 0;
+    if(a.includes(area.split("/")[0]) || area.includes(a.split("/")[0])) return 1;
+    if(a.includes("도심") || a.includes("난징동루") || area.includes("난징동루")) return 2;
+    return 3;
+  };
+  return entries.sort((a,b)=>score(a)-score(b));
+}
+function render(){
+ const app=document.getElementById("app");
+ const bar=document.getElementById("bar");
+ bar.style.width=(step===0?20:step===1?40:step===2?60:step===3?80:100)+"%";
+ if(step===0){
+   app.innerHTML=`<h2>1. 가장 가고 싶은 관광지는?</h2><p>하나를 골라주세요. 선택한 지역을 다음 식당·카페 추천의 기준으로 사용할게요.</p>${Object.entries(tourist).map(([n,v])=>`<button class="option ${answers.tour===n?'selected':''}" onclick="pick('tour','${n}')"><b>${n}</b><small>${v.desc} · ${v.area}</small></button>`).join("")}<button class="next" onclick="go()" ${answers.tour?'':'disabled'}>다음</button>`;
+ } else if(step===1){
+   if(answers.tour==="신천지"){
+     app.innerHTML=`<h2>2. 대한민국 상하이 임시정부도 갈까요?</h2><p>신천지를 선택해서만 나타나는 추가 선택이에요.</p>
+     <button class="option ${answers.gov==='갈래요'?'selected':''}" onclick="pick('gov','갈래요')"><b>🇰🇷 갈래요</b><small>신천지 일정에 임시정부를 함께 넣기</small></button>
+     <button class="option ${answers.gov==='안 갈래요'?'selected':''}" onclick="pick('gov','안 갈래요')"><b>안 갈래요</b><small>신천지에 집중하기</small></button>
+     <button class="next" onclick="go()" ${answers.gov?'':'disabled'}>다음</button>`;
+   } else { step=2; render(); return; }
+ } else if(step===2){
+   const area=tourist[answers.tour].area;
+   const list=nearChoices(restaurants,area);
+   app.innerHTML=`<h2>${answers.tour} 일정 뒤에는 어떤 식당?</h2><p>선택한 관광지와 가까운 권역을 우선으로 정렬했어요.</p>${list.map(([n,v],i)=>`<button class="option ${answers.rest===n?'selected':''}" onclick="pick('rest','${n}')"><b>${n}</b><small>${i<2?'📍 가까운 권역 우선 · ':''}${v.place}</small></button>`).join("")}<button class="next" onclick="go()" ${answers.rest?'':'disabled'}>다음</button>`;
+ } else if(step===3){
+   const area=restaurants[answers.rest].area;
+   const list=nearChoices(cafes,area);
+   app.innerHTML=`<h2>식사 후에는 어디로?</h2><p>식당 권역을 기준으로 카페 후보 순서를 바꿨어요.</p>${list.map(([n,v])=>`<button class="option ${answers.cafe===n?'selected':''}" onclick="pick('cafe','${n}')"><b>${n}</b><small>${v.area}</small></button>`).join("")}<button class="next" onclick="go()" ${answers.cafe?'':'disabled'}>다음</button>`;
+ } else if(step===4){
+   const area=cafes[answers.cafe].area;
+   const list=nearChoices(shops,area);
+   app.innerHTML=`<h2>마지막으로 쇼핑은?</h2><p>카페 위치를 기준으로 가까운 선택지를 먼저 보여줘요.</p>${list.map(([n,v])=>`<button class="option ${answers.shop===n?'selected':''}" onclick="pick('shop','${n}')"><b>${n}</b><small>${v.area}</small></button>`).join("")}<button class="next" onclick="finish()" ${answers.shop?'':'disabled'}>✨ 내 코스 보기</button>`;
+ }
+}
+function pick(k,v){answers[k]=v;render()}
+function go(){ if(step===1 && answers.tour!=="신천지") step=2; else step++; render(); }
+function finish(){
+ const key=[answers.tour,answers.gov,answers.rest,answers.cafe,answers.shop].join("|");
+ let hash=0; for(let i=0;i<key.length;i++) hash=(hash*31+key.charCodeAt(i))>>>0;
+ const letter=String.fromCharCode(65+(hash%8));
+ document.getElementById("bar").style.width="100%";
+ document.getElementById("app").innerHTML=`<div class="result">
+   <div class="tag">최종 결과</div>
+   <h1>✨ ${letter} 코스 ✨</h1>
+   <p>당신이 고른 조합으로 만든 상하이 일정이에요.</p>
+   <div class="route"><b>🏙️ 관광</b><br>${answers.tour}${answers.tour==="신천지" ? " → "+(answers.gov==="갈래요"?"🇰🇷 대한민국 상하이 임시정부":"임시정부 제외"):""}</div>
+   <div class="route"><b>🍜 식사</b><br>${answers.rest}</div>
+   <div class="route"><b>☕ 카페</b><br>${answers.cafe}</div>
+   <div class="route"><b>🛍️ 쇼핑</b><br>${answers.shop}</div>
+   <div class="route"><b>📅 고정 일정</b><br>11/1 디즈니랜드 → 노보텔 클로버<br>11/2 야생동물원 → 16:25 귀국</div>
+   <button class="restart" onclick="location.reload()">처음부터 다시 하기</button>
+ </div>`;
+}
+render();
+</script>
+</body>
+</html>

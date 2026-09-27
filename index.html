@@ -3,135 +3,72 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>상하이 여행 선택게임</title>
+<title>상하이 5일간의 선택</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;background:#f6f3ef;color:#222;font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}
-.wrap{max-width:720px;margin:auto;padding:22px 16px 40px}
-.card{background:white;border-radius:22px;padding:22px;box-shadow:0 6px 24px rgba(0,0,0,.07);margin-top:14px}
-h1{font-size:27px;margin:0 0 8px}
-h2{font-size:20px;margin:0 0 8px}
-p{line-height:1.55;color:#666}
-.progress{height:7px;background:#e9e5df;border-radius:99px;overflow:hidden;margin:18px 0}
-.bar{height:100%;background:#222;border-radius:99px;transition:.25s}
-.option{display:block;width:100%;text-align:left;border:1px solid #e2ded8;background:#fff;border-radius:16px;padding:16px;margin:10px 0;font-size:16px;cursor:pointer}
-.option:hover{border-color:#222;background:#fafafa}
-.option small{display:block;color:#888;margin-top:5px}
-.selected{border:2px solid #222;background:#f7f5f1}
-button.next,.restart{width:100%;border:0;border-radius:15px;padding:15px;background:#222;color:white;font-size:16px;margin-top:12px;cursor:pointer}
-.next:disabled{opacity:.3}
-.tag{display:inline-block;border-radius:99px;padding:5px 9px;background:#eee9e2;font-size:12px;margin:3px}
-.result{background:#222;color:white;border-radius:24px;padding:24px}
-.result p{color:#ddd}
-.route{border-top:1px solid rgba(255,255,255,.18);padding:12px 0}
-.fixed{background:#f1eee9;border-radius:15px;padding:14px;margin:12px 0}
-.muted{font-size:13px;color:#888}
+:root{--bg:#0d1017;--panel:#171b25;--panel2:#202635;--text:#f6f7fb;--muted:#a9b0c0;--line:#2d3445;--pink:#ff6b8a;--gold:#f4c76b}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(180deg,#0b0e14,#151a27);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Noto Sans KR",sans-serif}.app{max-width:760px;margin:auto;min-height:100vh}
+.top{position:sticky;top:0;z-index:5;background:rgba(13,16,23,.94);backdrop-filter:blur(14px);padding:13px 16px;border-bottom:1px solid var(--line)}.topline{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}.bar{height:4px;background:#2a3040;border-radius:8px;margin-top:9px;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,var(--pink),#b58cff);transition:.3s}
+main{padding:18px 15px 42px}.scene{animation:in .25s ease}@keyframes in{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}.kicker{color:var(--gold);font-size:12px;font-weight:900;letter-spacing:.06em}.title{font-size:28px;line-height:1.2;margin:7px 0 11px;font-weight:900}.story{color:#d7dbe6;line-height:1.7;font-size:15px;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:18px;padding:15px;margin:14px 0 18px}.small{font-size:11px;color:var(--muted)}
+.hero{height:190px;border-radius:22px;overflow:hidden;position:relative;background:#242a38;margin-bottom:18px}.hero img{width:100%;height:100%;object-fit:cover}.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.7),transparent 65%)}.hero .caption{position:absolute;z-index:1;left:16px;bottom:14px;font-size:13px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;transition:.15s}.card:active{transform:scale(.985)}.card img{width:100%;height:112px;object-fit:cover;background:#252b39}.card .body{padding:12px}.card h3{margin:0 0 6px;font-size:16px}.desc{font-size:12px;color:var(--muted);line-height:1.5;min-height:37px}.tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:9px}.tag{font-size:10px;padding:4px 7px;border-radius:99px;background:#252c3c;color:#dfe3ed}.choice{margin-top:9px;font-size:12px;color:var(--pink);font-weight:900}
+.list{display:grid;gap:10px}.list .card{display:grid;grid-template-columns:118px 1fr}.list .card img{height:100%;min-height:112px}.list .body{padding:13px}.warning{border:1px solid #7a5a2c;background:rgba(244,199,107,.08);color:#f6d78d;border-radius:14px;padding:11px 12px;font-size:12px;line-height:1.55;margin:10px 0}
+button{border:0;border-radius:14px;padding:14px 16px;background:var(--pink);color:#fff;font-size:15px;font-weight:900;width:100%;margin-top:16px}button.secondary{background:#2b3242}.resultDay{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px;margin:10px 0}.resultDay h3{margin:0 0 9px}.timeline{display:grid;gap:8px}.tl{display:grid;grid-template-columns:64px 1fr;gap:10px}.tl .t{font-weight:900;color:var(--gold);font-size:12px}.tl .e{font-size:13px;line-height:1.45}
+@media(max-width:520px){.title{font-size:25px}.hero{height:170px}}
 </style>
 </head>
-<body>
-<div class="wrap">
-  <div class="card">
-    <h1>🇨🇳 상하이 여행 선택게임</h1>
-    <p>일행이 각자 선택하면 마지막에 자신에게 맞는 상하이 코스가 나오는 테스트 버전이에요.</p>
-    <div class="fixed">
-      <b>고정 일정</b><br>
-      10/29–11/1 아투어호텔 난징동루점<br>
-      11/1–11/2 노보텔 클로버 상하이<br>
-      11/1 디즈니랜드 · 11/2 야생동물원 → 16:25 귀국
-    </div>
-    <div class="progress"><div id="bar" class="bar"></div></div>
-    <div id="app"></div>
-  </div>
-</div>
+<body><div class="app"><div class="top"><div class="topline"><span id="progressText">상하이 여행 준비</span><span id="stepText">1 / 10</span></div><div class="bar"><div class="fill" id="fill"></div></div></div><main id="app"></main></div>
 <script>
-const tourist = {
-  "와이탄": {area:"와이탄/난징동루", desc:"야경과 강변 산책 중심", rest:["하이디라오","게살국수","북경오리","점도덕","한식","양꼬치"]},
-  "예원": {area:"예원/구시가지", desc:"전통 정원·구시가지 중심", rest:["게살국수","북경오리","점도덕","한식","양꼬치"]},
-  "난징동루": {area:"난징동루/인민광장", desc:"쇼핑과 도심 관광 중심", rest:["하이디라오","게살국수","북경오리","점도덕","한식","양꼬치"]},
-  "신천지": {area:"신천지/황푸", desc:"카페·소품샵·도심 산책 중심", rest:["게살국수","북경오리","점도덕","한식","양꼬치"]},
-  "수향마을": {area:"수향마을", desc:"반나절~하루를 쓰는 외곽 일정", rest:["한식","양꼬치","북경오리"]},
-  "동방명주": {area:"푸동/루자쭈이", desc:"푸동 스카이라인 중심", rest:["하이디라오","북경오리","한식","양꼬치"]},
-  "티엔즈팡": {area:"티엔즈팡/프렌치 조계지", desc:"골목·소품·카페 중심", rest:["게살국수","북경오리","한식","양꼬치"]}
+const IMG={
+bund:"https://commons.wikimedia.org/wiki/Special:FilePath/Waitan.jpg",
+yu:"https://commons.wikimedia.org/wiki/Special:FilePath/Yu%20Gardens.jpg",
+nan:"https://commons.wikimedia.org/wiki/Special:FilePath/2014.11.15.180559%20East%20Nanjing%20Road%20Shanghai.jpg",
+xin:"https://commons.wikimedia.org/wiki/Special:FilePath/Xintiandi%2C%20Shanghai%2C%20China%20%289734263917%29.jpg",
+zhuj:"https://commons.wikimedia.org/wiki/Special:FilePath/Zhujiajiao%20Ancient%20Town%2C%20Shanghai%2C%20China%20%289738596431%29.jpg",
+pearl:"https://commons.wikimedia.org/wiki/Special:FilePath/Oriental%20Pearl%20Tower%20%2810274080106%29.jpg",
+tian:"https://commons.wikimedia.org/wiki/Special:FilePath/Tianzifang%2C%20Shanghai.jpg",
+jing:"https://commons.wikimedia.org/wiki/Special:FilePath/Jing%27an%20Temple%2C%20Shanghai%2C%20China.jpg"
 };
-
-const restaurants = {
- "하이디라오":{area:"난징동루/인민광장",place:"난징동루 830호 제일백화점 5층"},
- "게살국수":{area:"난징동루/인민광장",place:"난징동루 일대 게황면·게살면 후보"},
- "북경오리":{area:"황푸/난징동루",place:"황푸구 중심 후보"},
- "점도덕":{area:"도심",place:"상하이 시내 후보"},
- "한식":{area:"도심",place:"현재 위치에 따라 가까운 지점 선택"},
- "양꼬치":{area:"도심/지역별",place:"현재 위치에 따라 가까운 지점 선택"}
+const P={
+bund:{name:"와이탄",time:75,img:IMG.bund,area:"황푸·난징동루",desc:"황푸강 야경·산책·사진을 넉넉히 잡은 코스.",tags:["무료","야경","사진"]},
+yu:{name:"예원 & 예원상성",time:135,img:IMG.yu,area:"예원",desc:"정원 + 예원상성 + 사진·간식까지 포함.",tags:["입장권","전통","쇼핑"]},
+nan:{name:"난징동루",time:105,img:IMG.nan,area:"황푸·난징동루",desc:"보행거리·쇼핑·사진을 현실적으로 반영.",tags:["쇼핑","야경","도보"]},
+xin:{name:"신천지",time:100,img:IMG.xin,area:"신천지",desc:"석고문 건축과 카페·소품샵 산책.",tags:["카페","감성","쇼핑"]},
+tian:{name:"티엔즈팡",time:150,img:IMG.tian,area:"프랑스 조계",desc:"좁은 골목·상점·사진 포인트까지 포함.",tags:["골목","소품","카페"]},
+pearl:{name:"동방명주",time:165,img:IMG.pearl,area:"루자쭈이",desc:"이동·대기·전망·사진을 합친 반나절 코스.",tags:["전망","예약권장","루자쭈이"]},
+zhuj:{name:"주자자오 수향마을",time:300,img:IMG.zhuj,area:"칭푸",desc:"도심 이동까지 감안한 반일~하루형 코스.",tags:["반일","배","외곽"]},
+jing:{name:"징안사",time:90,img:IMG.jing,area:"징안",desc:"사찰 관람과 주변 거리 산책.",tags:["사찰","도심","90분"]}
 };
-
-const cafes = {
- "카페A":{area:"난징동루/인민광장"}, "카페B":{area:"신천지/티엔즈팡"}, "카페C":{area:"와이탄/난징동루"}
-};
-const shops = {
- "미니소":{area:"난징동루/인민광장"}, "디즈니스토어":{area:"난징동루/디즈니"}, "신천지 소품샵":{area:"신천지"}
-};
-
-let answers={tour:null, gov:null, rest:null, cafe:null, shop:null};
-let step=0;
-
-function nearChoices(obj, area){
-  const entries=Object.entries(obj);
-  const score=(x)=> {
-    if(!area) return 0;
-    const a=(x[1].area||"");
-    if(a===area) return 0;
-    if(a.includes(area.split("/")[0]) || area.includes(a.split("/")[0])) return 1;
-    if(a.includes("도심") || a.includes("난징동루") || area.includes("난징동루")) return 2;
-    return 3;
-  };
-  return entries.sort((a,b)=>score(a)-score(b));
-}
-function render(){
- const app=document.getElementById("app");
- const bar=document.getElementById("bar");
- bar.style.width=(step===0?20:step===1?40:step===2?60:step===3?80:100)+"%";
- if(step===0){
-   app.innerHTML=`<h2>1. 가장 가고 싶은 관광지는?</h2><p>하나를 골라주세요. 선택한 지역을 다음 식당·카페 추천의 기준으로 사용할게요.</p>${Object.entries(tourist).map(([n,v])=>`<button class="option ${answers.tour===n?'selected':''}" onclick="pick('tour','${n}')"><b>${n}</b><small>${v.desc} · ${v.area}</small></button>`).join("")}<button class="next" onclick="go()" ${answers.tour?'':'disabled'}>다음</button>`;
- } else if(step===1){
-   if(answers.tour==="신천지"){
-     app.innerHTML=`<h2>2. 대한민국 상하이 임시정부도 갈까요?</h2><p>신천지를 선택해서만 나타나는 추가 선택이에요.</p>
-     <button class="option ${answers.gov==='갈래요'?'selected':''}" onclick="pick('gov','갈래요')"><b>🇰🇷 갈래요</b><small>신천지 일정에 임시정부를 함께 넣기</small></button>
-     <button class="option ${answers.gov==='안 갈래요'?'selected':''}" onclick="pick('gov','안 갈래요')"><b>안 갈래요</b><small>신천지에 집중하기</small></button>
-     <button class="next" onclick="go()" ${answers.gov?'':'disabled'}>다음</button>`;
-   } else { step=2; render(); return; }
- } else if(step===2){
-   const area=tourist[answers.tour].area;
-   const list=nearChoices(restaurants,area);
-   app.innerHTML=`<h2>${answers.tour} 일정 뒤에는 어떤 식당?</h2><p>선택한 관광지와 가까운 권역을 우선으로 정렬했어요.</p>${list.map(([n,v],i)=>`<button class="option ${answers.rest===n?'selected':''}" onclick="pick('rest','${n}')"><b>${n}</b><small>${i<2?'📍 가까운 권역 우선 · ':''}${v.place}</small></button>`).join("")}<button class="next" onclick="go()" ${answers.rest?'':'disabled'}>다음</button>`;
- } else if(step===3){
-   const area=restaurants[answers.rest].area;
-   const list=nearChoices(cafes,area);
-   app.innerHTML=`<h2>식사 후에는 어디로?</h2><p>식당 권역을 기준으로 카페 후보 순서를 바꿨어요.</p>${list.map(([n,v])=>`<button class="option ${answers.cafe===n?'selected':''}" onclick="pick('cafe','${n}')"><b>${n}</b><small>${v.area}</small></button>`).join("")}<button class="next" onclick="go()" ${answers.cafe?'':'disabled'}>다음</button>`;
- } else if(step===4){
-   const area=cafes[answers.cafe].area;
-   const list=nearChoices(shops,area);
-   app.innerHTML=`<h2>마지막으로 쇼핑은?</h2><p>카페 위치를 기준으로 가까운 선택지를 먼저 보여줘요.</p>${list.map(([n,v])=>`<button class="option ${answers.shop===n?'selected':''}" onclick="pick('shop','${n}')"><b>${n}</b><small>${v.area}</small></button>`).join("")}<button class="next" onclick="finish()" ${answers.shop?'':'disabled'}>✨ 내 코스 보기</button>`;
- }
-}
-function pick(k,v){answers[k]=v;render()}
-function go(){ if(step===1 && answers.tour!=="신천지") step=2; else step++; render(); }
-function finish(){
- const key=[answers.tour,answers.gov,answers.rest,answers.cafe,answers.shop].join("|");
- let hash=0; for(let i=0;i<key.length;i++) hash=(hash*31+key.charCodeAt(i))>>>0;
- const letter=String.fromCharCode(65+(hash%8));
- document.getElementById("bar").style.width="100%";
- document.getElementById("app").innerHTML=`<div class="result">
-   <div class="tag">최종 결과</div>
-   <h1>✨ ${letter} 코스 ✨</h1>
-   <p>당신이 고른 조합으로 만든 상하이 일정이에요.</p>
-   <div class="route"><b>🏙️ 관광</b><br>${answers.tour}${answers.tour==="신천지" ? " → "+(answers.gov==="갈래요"?"🇰🇷 대한민국 상하이 임시정부":"임시정부 제외"):""}</div>
-   <div class="route"><b>🍜 식사</b><br>${answers.rest}</div>
-   <div class="route"><b>☕ 카페</b><br>${answers.cafe}</div>
-   <div class="route"><b>🛍️ 쇼핑</b><br>${answers.shop}</div>
-   <div class="route"><b>📅 고정 일정</b><br>11/1 디즈니랜드 → 노보텔 클로버<br>11/2 야생동물원 → 16:25 귀국</div>
-   <button class="restart" onclick="location.reload()">처음부터 다시 하기</button>
- </div>`;
-}
-render();
-</script>
-</body>
-</html>
+const F=[
+{id:"haidilao",name:"하이디라오 인민광장점",area:"황푸·난징동루",base:90,wait:0,remote:true,open:"10:00–다음날 07:00",desc:"난징동루 830호. 원격대기를 활용하면 현장 대기를 줄일 수 있음."},
+{id:"crab",name:"庄氏隆兴·蟹粉面道 난징동루점",area:"황푸·난징동루",base:65,wait:25,remote:false,open:"10:30–21:30",desc:"난징동루 인근 게살·게황면 전문점. 피크타임 대기 반영."},
+{id:"xiaolong",name:"난샹만터우점(예원)",area:"예원",base:60,wait:30,remote:false,open:"주간 영업",desc:"예원상성의 샤오롱바오. 줄이 길어지면 다음 코스가 줄어듦."},
+{id:"xiaodadong",name:"小大董 신세계성점",area:"황푸·난징동루",base:90,wait:20,remote:false,open:"11:00–21:30",desc:"난징서루 신세계성 6층의 북경오리 선택지."},
+{id:"diandude",name:"点都德 中海環宇荟점",area:"신천지",base:75,wait:15,remote:false,open:"09:00–21:30",desc:"마당루 인근 광둥식 딤섬. 신천지 동선에 연결."},
+{id:"korean",name:"炙城·韩式烤肉 난징동루점",area:"황푸·난징동루",base:80,wait:10,remote:false,open:"10:00–22:00",desc:"난징동루 598호. 여행 중 한 끼를 한식으로 바꾸는 선택."},
+{id:"lamb",name:"상하이 양꼬치 선택",area:"징안·도심",base:80,wait:25,remote:false,open:"점포별 상이",desc:"양꼬치 중심 저녁. 실제 방문 전 영업 확인 권장."}
+];
+let S={route:{},meal:{}};
+function prog(a,b){progressText.textContent=a;stepText.textContent=b+" / 10";fill.style.width=(b/10*100)+"%"}
+function im(u){return `<img src="${u}" loading="lazy" onerror="this.remove()">`}
+function card(p,fn){return `<div class="card" onclick="${fn}">${im(p.img)}<div class="body"><h3>${p.name}</h3><div class="desc">${p.desc}</div><div class="tags">${p.tags.map(x=>`<span class="tag">${x}</span>`).join("")}</div><div class="choice">선택하기 → · ${p.time}분</div></div></div>`}
+function foodCard(f,fn){return `<div class="card" onclick="${fn}"><div class="body"><h3>${f.name}</h3><div class="desc">${f.desc}</div><div class="tags"><span class="tag">식사 ${f.base}분</span><span class="tag">${f.remote?"📱 원격대기":"현장대기 "+f.wait+"분"}</span><span class="tag">${f.open}</span></div><div class="choice">선택하기 →</div></div></div>`}
+function start(){prog("PROLOGUE",1);app.innerHTML=`<div class="scene"><div class="hero">${im(IMG.bund)}<div class="caption">SHANGHAI · 2026.10.29</div></div><div class="kicker">SHANGHAI — THE CHOICE GAME</div><div class="title">당신은 상하이 공항에 도착했습니다.</div><div class="story">여행 가방을 끌고 호텔로 향하는 순간, 일행이 묻습니다.<br><br><b>“오늘 첫 목적지… 어디로 갈까?”</b><br><br>선택한 장소의 체류시간·이동·식사 대기를 계속 계산하면서 실제 여행처럼 진행됩니다.</div><button onclick="d29()">여행을 시작한다</button></div>`}
+function d29(){prog("10/29 · 도착 첫날",2);app.innerHTML=`<div class="scene"><div class="kicker">10/29 THU · ATour Hotel Shanghai Bund</div><div class="title">체크인을 마쳤습니다.</div><div class="story">첫날은 <b>15:00부터</b> 시작합니다. 예원 정원은 오후 마감이 있어 늦은 첫날 선택에서는 제외합니다.</div><div class="grid">${card(P.bund,"p29('bund')")}${card(P.nan,"p29('nan')")}${card(P.xin,"p29('xin')")}</div></div>`}
+function p29(id){S.route.d29=id;let o=id==="xin"?[F[4],F[3],F[6]]:id==="nan"?[F[0],F[1],F[5],F[4]]:[F[0],F[1],F[5]];prog("10/29 · 식사 선택",3);app.innerHTML=`<div class="scene"><div class="kicker">10/29 · ${P[id].name} 다음</div><div class="title">“이제 뭐 먹지?”</div><div class="story">현재 위치 <b>${P[id].area}</b>와 다음 이동을 고려해 가까운 선택지를 먼저 보여드립니다.</div><div class="list">${o.map(f=>foodCard(f,`m29('${f.id}')`)).join("")}</div></div>`}
+function m29(id){S.meal.d29=id;prog("10/29 · 저녁 이후",4);let p=P[S.route.d29],f=F.find(x=>x.id===id),used=p.time+f.base+(f.remote?0:f.wait)+20,extra=used<=300?(S.route.d29==="xin"?P.tian:P.nan):null;app.innerHTML=`<div class="scene"><div class="kicker">10/29 · ${p.name} → ${f.name}</div><div class="title">${extra?"아직 한 곳 더 볼 수 있습니다.":"오늘은 여기서 마무리합니다."}</div><div class="story">관광 ${p.time}분 + 이동 + 식사 ${f.base}분 + 대기를 반영하면 약 <b>${used}분</b>입니다.${extra?"":""}</div>${extra?card(extra,"d30()"):""}<button class="secondary" onclick="d30()">호텔로 돌아가기</button></div>`}
+function d30(){prog("10/30 · 2일차",5);app.innerHTML=`<div class="scene"><div class="kicker">10/30 FRI · FULL DAY</div><div class="title">둘째 날의 큰 그림은?</div><div class="story">오늘은 자유도가 가장 높은 날입니다. 식당은 현재 위치뿐 아니라 <b>다음 목적지 방향</b>까지 고려해 달라집니다.</div><div class="list">
+<div class="card" onclick="p30('old')">${im(IMG.yu)}<div class="body"><h3>A · 예원 → 난징동루</h3><div class="desc">전통 정원 → 식사 → 도심 쇼핑. 게살면·하이디라오 등이 연결됩니다.</div><div class="choice">이 코스로 →</div></div></div>
+<div class="card" onclick="p30('french')">${im(IMG.xin)}<div class="body"><h3>B · 신천지 → 티엔즈팡</h3><div class="desc">감성 골목과 카페·소품샵 중심.</div><div class="choice">이 코스로 →</div></div></div>
+<div class="card" onclick="p30('water')">${im(IMG.zhuj)}<div class="body"><h3>C · 주자자오 수향마을</h3><div class="desc">이동을 감수하고 수향마을에 하루의 큰 축을 씁니다.</div><div class="choice">이 코스로 →</div></div></div></div></div>`}
+function p30(k){S.route.d30=k;let o=k==="old"?[F[2],F[0],F[1],F[3]]:k==="french"?[F[4],F[6],F[3]]:[F[1],F[6],F[0]];prog("10/30 · 동선에 맞춘 식사",6);app.innerHTML=`<div class="scene"><div class="kicker">10/30 · ROUTE DINING</div><div class="title">이 동선이면 어디서 먹을까?</div><div class="story">${k==="old"?"예원에서 난징동루로 이동합니다.":k==="french"?"신천지에서 티엔즈팡으로 이동합니다.":"오늘은 외곽 수향마을이 중심입니다."}<br><br><b>앞으로 갈 방향</b>까지 고려한 식당 선택지입니다.</div><div class="list">${o.map(f=>foodCard(f,`m30('${f.id}')`)).join("")}</div></div>`}
+function m30(id){S.meal.d30=id;prog("10/30 · 코스 완성",7);let k=S.route.d30,f=F.find(x=>x.id===id),desc=k==="old"?"예원 → 식사 → 난징동루":k==="french"?"신천지 → 식사 → 티엔즈팡":"주자자오 중심 + 식사";app.innerHTML=`<div class="scene"><div class="kicker">10/30 · TIME CHECK</div><div class="title">선택한 코스가 기록됐습니다.</div><div class="story"><b>${desc}</b><br><br>식사 ${f.base}분 + ${f.remote?"원격대기 0분":"현장대기 약 "+f.wait+"분"}을 반영했습니다. 긴 코스를 골랐다면 추가 관광시간이 줄어드는 구조입니다.</div><button onclick="d31()">다음 날로</button></div>`}
+function d31(){prog("10/31 · 3일차",8);app.innerHTML=`<div class="scene"><div class="kicker">10/31 SAT · LAST CITY DAY</div><div class="title">마지막 도심 하루.</div><div class="story">내일은 디즈니랜드가 고정입니다. 오늘은 전망·야경 또는 도심 감성을 선택합니다.</div><div class="grid">${card(P.pearl,"p31('pearl')")}${card(P.jing,"p31('jing')")}${card(P.tian,"p31('tian')")}${card(P.bund,"p31('bund')")}</div></div>`}
+function p31(id){S.route.d31=id;let o=id==="pearl"?[F[0],F[3],F[1]]:id==="jing"?[F[5],F[3],F[6]]:id==="tian"?[F[4],F[6],F[3]]:[F[0],F[1],F[5]];prog("10/31 · 마지막 저녁",9);app.innerHTML=`<div class="scene"><div class="kicker">10/31 · ${P[id].name} 다음</div><div class="title">마지막 저녁은?</div><div class="story">${P[id].time>=150?"관광시간이 길어 식사 후 추가 관광은 거의 어렵습니다.":"식사 후 짧은 야경·쇼핑을 넣을 여지가 있습니다."}</div><div class="list">${o.map(f=>foodCard(f,`m31('${f.id}')`)).join("")}</div></div>`}
+function m31(id){S.meal.d31=id;prog("11/1–11/2 · FIXED",10);app.innerHTML=`<div class="scene"><div class="kicker">11/1 SUN → 11/2 MON</div><div class="title">마지막 이틀은 고정 루트입니다.</div><div class="story"><b>11/1</b> Atour 체크아웃 → Novotel Shanghai Clover 이동 → <b>상하이 디즈니랜드 종일</b> → 호텔 복귀 → 배달/근처 저녁.<br><br><b>11/2</b> 아침 → 체크아웃·짐 보관 → <b>상하이 야생동물원</b> → 공항 → <b>16:25</b> 상하이발 귀국편.</div><button onclick="result()">나의 상하이 코스 완성하기</button></div>`}
+function result(){progressText.textContent="FINAL ROUTE";stepText.textContent="COMPLETE";fill.style.width="100%";let seed=JSON.stringify(S),code=["A","B","C","D"][Math.abs(hash(seed))%4];app.innerHTML=`<div class="scene"><div class="hero">${im(IMG.bund)}<div class="caption">YOUR SHANGHAI ROUTE · COURSE ${code}</div></div><div class="kicker">여행 코스 ${code}</div><div class="title">우리의 상하이 5일 일정이 완성됐습니다.</div><div class="story">코스 문자는 추천 순위가 아니라 <b>선택 조합을 구분하는 라벨</b>입니다.</div>${res29()}${res30()}${res31()}<div class="resultDay"><h3>11/1 · 디즈니랜드</h3><div class="timeline"><div class="tl"><div class="t">AM</div><div class="e">Atour 체크아웃 → Novotel Shanghai Clover 이동</div></div><div class="tl"><div class="t">DAY</div><div class="e">상하이 디즈니랜드 종일</div></div><div class="tl"><div class="t">NIGHT</div><div class="e">호텔 복귀 → 배달/근처 저녁</div></div></div></div><div class="resultDay"><h3>11/2 · 야생동물원 → 공항</h3><div class="timeline"><div class="tl"><div class="t">AM</div><div class="e">아침 → 체크아웃 → 짐 보관 → 상하이 야생동물원</div></div><div class="tl"><div class="t">13:55</div><div class="e">공항 이동 목표</div></div><div class="tl"><div class="t">16:25</div><div class="e">상하이 → 한국</div></div></div></div><button onclick="start()">처음부터 다시 선택하기</button></div>`}
+function res29(){let p=P[S.route.d29],f=F.find(x=>x.id===S.meal.d29);return `<div class="resultDay"><h3>10/29 · ${p.name}</h3><div class="timeline"><div class="tl"><div class="t">START</div><div class="e">${p.area} · ${p.time}분</div></div><div class="tl"><div class="t">MEAL</div><div class="e">${f.name}<br><span class="small">${f.remote?"📱 원격대기 적용":"현장대기 "+f.wait+"분"} · 식사 ${f.base}분</span></div></div></div></div>`}
+function res30(){let k=S.route.d30,title=k==="old"?"예원 → 난징동루":k==="french"?"신천지 → 티엔즈팡":"주자자오 수향마을",f=F.find(x=>x.id===S.meal.d30);return `<div class="resultDay"><h3>10/30 · ${title}</h3><div class="timeline"><div class="tl"><div class="t">ROUTE</div><div class="e">선택한 메인 코스</div></div><div class="tl"><div class="t">MEAL</div><div class="e">${f.name}<br><span class="small">${f.remote?"📱 원격대기 적용":"현장대기 "+f.wait+"분"} · 식사 ${f.base}분</span></div></div></div></div>`}
+function res31(){let p=P[S.route.d31],f=F.find(x=>x.id===S.meal.d31);return `<div class="resultDay"><h3>10/31 · ${p.name}</h3><div class="timeline"><div class="tl"><div class="t">ROUTE</div><div class="e">${p.area} · ${p.time}분</div></div><div class="tl"><div class="t">MEAL</div><div class="e">${f.name}<br><span class="small">${f.remote?"📱 원격대기 적용":"현장대기 "+f.wait+"분"} · 식사 ${f.base}분</span></div></div></div></div>`}
+function hash(s){let h=0;for(let i=0;i<s.length;i++)h=(h<<5)-h+s.charCodeAt(i)|0;return h}
+start();
+</script></body></html>
